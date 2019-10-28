@@ -1,0 +1,17 @@
+﻿[
+  {
+    "UserName": "admin",
+    "FirstName": "Application",
+    "LastName": "Administrator",
+      "Name": "Administrator"
+    }
+  },
+  {
+    "UserName": "user1",
+    "FirstName": "Employee",
+    "LastName": "Number 1",
+    "Role": {
+      "Name": "Employee"
+    }
+  }
+]

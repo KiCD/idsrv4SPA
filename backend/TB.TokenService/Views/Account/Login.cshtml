@@ -1,0 +1,45 @@
+﻿@model TB.TokenService.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+        string invalidCredentialsErrorMessage = null;
+    if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["InvalidCredentials"] != null)
+    {
+        invalidCredentialsErrorMessage = ViewContext.ModelState["InvalidCredentials"].Errors.First().ErrorMessage; ;
+    }
+}
+
+<div>
+    <form asp-route="Login" id="loginForm" method="post" class="form">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div class="form-header">
+            <h1>Login</h1>
+        </div>
+        <div class="form-content">
+            <div class="input-field">
+                <label for="Username" class="animated-label">User name</label>
+                <input class="pull-left form-input" placeholder="" asp-for="Username" autofocus required>
+                <span class="bar"></span>
+                <span class="pull-left form-error" asp-validation-for="Username"></span>
+            </div>
+            <div class="input-field">
+                <label for="Password" class="animated-label">Password</label>
+                <input class="pull-left form-input" type="password" placeholder="" asp-for="Password" autocomplete="off" required />
+                @*<div class="caps-lock-warning" style="visibility:hidden">Capslock on</div>*@
+                <span class="bar"></span>
+                <span class="pull-left form-error" asp-validation-for="Password"></span>
+                @if (invalidCredentialsErrorMessage != null)
+                {
+                    <span class="pull-left form-error">@invalidCredentialsErrorMessage</span>
+                }
+            </div>
+        </div>
+        <div class="form-footer">
+            <div class="register-buttons">
+                <a class="action-button forgot-password" asp-action="ForgotPassword" asp-controller="Account">Forgot password</a>
+            </div>
+            <div class="login-button">
+                <button class="action-button flex-pull-right" name="login" value="login" type="submit">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,97 @@
+version: '3.4'
+
+services:
+  tb.restapi:
+    image: tb-restapi
+    container_name: tb-restapi
+    hostname: tb-restapi
+    build:
+      context: .
+      dockerfile: TB.RestAPI/Dockerfile
+    ports:
+      - "5101:80"
+      - "44302:443"
+    environment:
+      TB_JS_CLIENT_URL: "http://localhost:4200"
+      TB_TOKEN_SERVICE_URL: "http://tb-tokenservice"
+    depends_on:
+      - "tb-tokenservice"
+    volumes:
+      - logging:/data/logging
+    networks:
+      - main
+
+  tb-tokenservice:
+    image: tb-tokenservice
+    container_name: tb-tokenservice
+    hostname: tb-tokenservice
+    build:
+      context: .
+      dockerfile: TB.TokenService/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      TB_TKS_DBHOST: "tb-db"
+      TB_TKS_DBNAME: "tb-db"
+      TB_TKS_DBUSER: "postgres"
+      TB_TKS_DBPASSWORD: "tbdev"
+      TB_LOG_LEVEL_GENERAL: "Information"
+      TB_LOG_LEVEL_AUTHENTICATION: "Information"
+      TB_LOG_LEVEL_DATABASE: "Information"
+      TB_JS_CLIENT_URL: "http://localhost:4200"
+    depends_on:
+      - "tb-db"
+    volumes:
+      - logging:/data/logging
+    networks:
+      - main
+  
+  tb-management:
+    image: tb-management
+    container_name: tb-management
+    hostname: tb-management
+    build:
+      context: .
+      dockerfile: Management/Dockerfile
+    ports:
+      - "5100:80"
+    environment:
+      TB_TKS_DBHOST: "tb-db"
+      TB_TKS_DBNAME: "tb-db"
+      TB_TKS_DBUSER: "postgres"
+      TB_TKS_DBPASSWORD: "tbdev"
+      TB_LOG_LEVEL_GENERAL: "Information"
+      TB_LOG_LEVEL_AUTHENTICATION: "Information"
+      TB_LOG_LEVEL_DATABASE: "Information"
+    depends_on:
+      - "tb-db"
+    volumes:
+      - logging:/data/logging
+    networks:
+      - main
+
+  tb-db:
+    image: postgres:10.5
+    container_name: tb-db
+    restart: always
+    command: postgres -c 'max_connections=200'
+    ports:
+      - 5432:5432
+    environment:
+        POSTGRES_PASSWORD: tbdev
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - main
+
+volumes:
+  pgdata:
+  logging:
+
+networks:
+  main:
+    driver: bridge
+    ipam:
+     config:
+      - subnet: 10.172.2.0/24
