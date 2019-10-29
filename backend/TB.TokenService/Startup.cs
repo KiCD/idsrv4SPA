@@ -2,7 +2,6 @@ using System;
 using TB.Entities;
 using TB.TokenService.Configuration;
 using TB.TokenService.Identity;
-using TB.TokenService.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,9 +17,11 @@ using Serilog;
 using Common.Infrastructure.Logging;
 using Common.Infrastructure.Configuration;
 using TB.TokenService.Services;
-using IdentityServer4.AspNetIdentity;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Common.Infrastructure;
+using IdentityServer4.Configuration;
+using TB.TokenService.Infrastructure;
 
 namespace TB.RestAPI
 {
@@ -91,12 +92,43 @@ namespace TB.RestAPI
 
         private void ConfigureIdentityServer(IServiceCollection services, string connectionString, IConfiguration configuration)
         {
-            services.AddIdentityServer()
+            services.AddIdentityServer(c =>
+            {
+                c.Endpoints = GetEndpointsOptions();
+                c.Discovery = GetDiscoveryOptions();
+            })
                   .AddInMemoryIdentityResources(IdentityServerConfiguration.GetIdentityResources())
                   .AddInMemoryApiResources(IdentityServerConfiguration.GetApiResources())
                   .AddInMemoryClients(IdentityServerConfiguration.GetClients(BuildClientUriConfigurationDictionary(Configuration)))
                   .AddAspNetIdentity<User>()
                   .AddDeveloperSigningCredential();
+        }
+        protected EndpointsOptions GetEndpointsOptions()
+        {
+            return new EndpointsOptions()
+            {
+                EnableDiscoveryEndpoint = true,
+                EnableAuthorizeEndpoint = true,
+                EnableTokenEndpoint = true,
+                EnableUserInfoEndpoint = true,
+                EnableTokenRevocationEndpoint = true,
+                EnableIntrospectionEndpoint = true,
+                EnableCheckSessionEndpoint = true,
+                EnableEndSessionEndpoint = true
+            };
+        }
+
+        protected DiscoveryOptions GetDiscoveryOptions()
+        {
+            return new DiscoveryOptions()
+            {
+                ShowClaims = false,
+                ShowGrantTypes = true,
+                ShowExtensionGrantTypes = false,
+                ShowKeySet = true,
+                ShowResponseModes = false,
+                ShowResponseTypes = false
+            };
         }
 
         private void ConfigureAuthorization(IServiceCollection services)
@@ -117,9 +149,6 @@ namespace TB.RestAPI
                    options.ValidationInterval = TimeSpan.FromMinutes(AuthenticationConfiguration.SecurityStampValidationIntervalInMinutes));
             services.ConfigureApplicationCookie(options =>
             {
-                //options.LoginPath = $"/Account/Login";
-                //options.LogoutPath = $"/Account/Logout";
-                //options.AccessDeniedPath = $"/Account/AccessDenied";
                 options.SlidingExpiration = AuthenticationConfiguration.CookieSlidingExpiration;
                 options.ExpireTimeSpan = TimeSpan.FromDays(AuthenticationConfiguration.PeristentCookieLifetimeInDays);
             });

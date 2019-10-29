@@ -36,8 +36,9 @@ namespace TB.TokenService.Identity
                     RequirePkce = true,
                     RequireConsent = false,
                     RequireClientSecret = false,
-                    AllowAccessTokensViaBrowser = true
-
+                    AllowAccessTokensViaBrowser = true,
+                    AccessTokenType = AccessTokenType.Jwt,
+                    AccessTokenLifetime = 60 * 5
                 }
             };
             foreach (var client in clientList)

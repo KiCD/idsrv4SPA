@@ -13,7 +13,8 @@ services:
       - "44302:443"
     environment:
       TB_JS_CLIENT_URL: "http://localhost:4200"
-      TB_TOKEN_SERVICE_URL: "http://tb-tokenservice"
+      TB_TOKEN_SERVICE_INTERNAL_URL: "http://tb-tokenservice"
+      TB_TOKEN_SERVICE_PUBLIC_PUBLIC_URL: "http://localhost"
     depends_on:
       - "tb-tokenservice"
     volumes:
