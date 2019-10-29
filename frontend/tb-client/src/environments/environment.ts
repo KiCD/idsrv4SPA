@@ -7,7 +7,7 @@ export const environment = {
   webClientEndPoint: 'http://localhost:4200',
   authRedirectUri: 'http://localhost:4200/callback',
   silentRedirectUri: 'http://localhost:4200/silent-refresh',
-  webApiEndPoint: 'http://localhost:5002',
+  webApiEndPoint: 'http://localhost:5101',
   production: false
 };
 
