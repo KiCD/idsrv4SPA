@@ -1,4 +1,6 @@
+import { AuthenticationService } from 'src/app/authentication/services/authentication.service';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'tb-client';
+  constructor(private authService: AuthenticationService, private router: Router) {
+
+  }
+
+  isLoggedIn() {
+    return this.authService.isLoggedIn();
+  }
 }

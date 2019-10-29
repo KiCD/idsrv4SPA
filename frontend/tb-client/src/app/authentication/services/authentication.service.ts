@@ -29,31 +29,15 @@ export class AuthenticationService {
     this.manager.events.addUserLoaded(user => {
       this.oidcStorage.storeAuthData(user);
     });
-    this.manager.events.addUserSignedOut(this.handleUserSignedOutEvent);
-  }
-
-  public handleUserSignedOutEvent() {
-    console.log('user signed out, redirect to homepage');
-    this.handleUserLoggedOut();
+    this.manager.events.addUserSignedOut(() => this.handleUserLoggedOut());
   }
 
   public handleUserLoggedOut() {
-    if (
-      !this.router.isActive('data-protection', true) &&
-      !this.router.isActive('terms-and-conditions', true) &&
-      !this.router.isActive('legal-notice', true)
-    ) {
-      this.logout();
-    } else {
-      this.oidcStorage.clearAuthData();
-    }
+    this.logout();
   }
 
   clearAuthData() {
     this.oidcStorage.clearAuthData();
-  }
-  forceDashboardReload(): void {
-    window.location.href = './dashboard';
   }
 
   isLoggedIn(): boolean {
