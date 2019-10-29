@@ -1,8 +1,6 @@
-<div *ngIf="isLoggedIn()">
-<p>You are logged in</p>
-<button  mat-icon-button (click)="logout()" class="mat-logout-button" title="Logout">
- Logout
-</button>
+<p></p>
+<div>
+<a routerLink="/protected-data">Fetch protected data</a>
 </div>
 
 <div *ngIf="!isLoggedIn()">Working...</div>

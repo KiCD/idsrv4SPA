@@ -1,0 +1,8 @@
+
+<p><strong>Weather data </strong></p>
+<div *ngFor="let forecast of protectedData">
+    <strong>Date:</strong>&nbsp;<span>{{ forecast.date | date }}</span>
+     &nbsp;
+    <strong>Temperature:</strong>&nbsp;<span> {{forecast.temperatureC}}</span>
+    <br>
+</div>
